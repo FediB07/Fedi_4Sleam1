@@ -1,11 +1,7 @@
 pipeline {
     agent any
 
-    // Déclare les outils configurés dans Jenkins
-    tools {
-        maven 'Maven3'  // Nom de l'installation Maven dans "Gérer Jenkins → Outils globaux"
-        jdk 'JDK17'     // Nom du JDK configuré
-    }
+    
 
     stages {
         stage('Checkout') {
