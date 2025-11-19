@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-    jdk 'JDK11'
-    maven 'Maven3'
-}
-
     stages {
         stage('Checkout') {
             steps {
@@ -67,7 +62,6 @@ pipeline {
         always {
             echo "=== Pipeline terminé ==="
             echo "Statut: ${currentBuild.result ?: 'SUCCESS'}"
-            // cleanWs() // Décommenter si vous voulez nettoyer l'espace de travail
         }
         success {
             echo "🎉 Pipeline exécuté avec succès!"
