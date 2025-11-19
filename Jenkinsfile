@@ -9,13 +9,13 @@ pipeline {
             }
         }
 
-        stage('Tests Maven') {
+         stage('Test') {
             steps {
-                // Rendre le wrapper exécutable et lancer les tests
-                sh 'chmod +x mvnw'
-                sh './mvnw test -DskipTests || echo "Tests échoués mais continuation"'
+                echo "Running Maven tests..."
+                sh 'mvn test'
             }
         }
+
 
         stage('Création du livrable') {
             steps {
