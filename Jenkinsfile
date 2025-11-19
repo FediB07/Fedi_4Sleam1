@@ -2,29 +2,30 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_CREDENTIALS = 'docker-hub-credentials-id'  // ID des credentials Docker Hub
-        DOCKER_IMAGE = "fedibarkouti/projet-sleam:latest"
+        DOCKER_HUB_CREDENTIALS = 'docker-hub-credentials-id'
+        DOCKER_IMAGE = "fedibarkouti/student-management:latest"
     }
 
     stages {
 
-        stage('Récupération du code') {
+        stage('Checkout') {
             steps {
-                git url: 'https://github.com/FediB7/Fedi_4Sleam1.git', branch: 'main'
+                git branch: 'main', url: 'https://github.com/FediB7/Fedi_4Sleam1.git'
             }
         }
 
-        stage('Tests Maven') {
+        stage('Maven Test') {
             steps {
                 echo "=== Exécution des tests Maven ==="
-                sh 'mvn test -DskipTests || echo "Tests échoués mais continuation"'
+                // Exécuter les tests unitaires
+                sh './mvnw test || echo "Tests échoués mais continuation"'
             }
         }
 
-        stage('Création du livrable') {
+        stage('Build Maven') {
             steps {
-                echo "=== Création du livrable JAR ==="
-                sh 'mvn clean package -DskipTests || echo "Build échoué mais continuation"'
+                echo "=== Compilation du projet Spring Boot ==="
+                sh './mvnw clean package -DskipTests || echo "Build échoué mais continuation"'
                 archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }
         }
