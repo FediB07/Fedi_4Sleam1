@@ -16,9 +16,12 @@ pipeline {
                 echo "=== STAGE 2: Exécution des tests ==="
                 script {
                     if (fileExists('pom.xml')) {
+                        // Rendre mvnw exécutable
+                        sh 'chmod +x mvnw'
+                        // Lancer les tests Maven
                         sh './mvnw test || echo "Aucun test trouvé ou échec des tests - continuation"'
                     } else {
-                        echo "Aucun fichier pom.xml trouvé - étape test ignorée"
+                        echo "Aucun fichier pom.xml trouvé - étape ignorée"
                     }
                 }
                 echo "✓ Tests exécutés"
@@ -33,7 +36,7 @@ pipeline {
                         sh './mvnw package -DskipTests || echo "Échec de la création du livrable"'
                         archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
                     } else {
-                        echo "Aucun pom.xml trouvé - création d'une archive simple"
+                        echo "Aucun fichier pom.xml trouvé, création d'une archive simple"
                         sh 'tar -czf bundle.tar.gz . || echo "Échec création archive"'
                         archiveArtifacts artifacts: 'bundle.tar.gz', fingerprint: true
                     }
