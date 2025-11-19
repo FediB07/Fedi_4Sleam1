@@ -1,40 +1,38 @@
 pipeline {
-    agent any
-
+    agent none
+    
     stages {
-
-        stage('Checkout') {
+        stage('Récupération du code') {
+            agent any
             steps {
+                echo "=== STAGE 1: Récupération du code ==="
                 checkout scm
+                echo "✓ Code récupéré avec succès"
             }
         }
-
-        stage('Prepare') {
-            steps {
-                sh 'chmod +x mvnw'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                sh './mvnw clean install'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh './mvnw test'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
+        
+        stage('Exécution des tests') {
+            agent {
+                docker {
+                    image 'node:16' // ou 'maven:3.8', 'python:3.9', etc.
+                    reuseNode true
                 }
             }
-        }
-
-        stage('Package') {
             steps {
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                echo "=== STAGE 2: Exécution des tests ==="
+                sh 'npm install'
+                sh 'npm test'
+                echo "✓ Tests exécutés avec succès"
+            }
+        }
+        
+        stage('Création du bundle') {
+            agent any
+            steps {
+                echo "=== STAGE 3: Création du bundle ==="
+                sh 'npm run build'
+                archiveArtifacts artifacts: 'dist/**/*', fingerprint: true
+                echo "✓ Bundle créé avec succès"
             }
         }
     }
